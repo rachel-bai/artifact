@@ -1,0 +1,13 @@
+{
+  "name": "daily-art",
+  "version": "1.0.0",
+  "description": "generates a new painting every day to broaden your artistic horizons",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
