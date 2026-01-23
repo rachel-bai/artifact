@@ -1,14 +1,14 @@
 /*
-Functionality to fetch a pool of random artworks, shuffle the pool, take the
-first 100 (random) artworks and store them using Node fs.
-Only needs to be called when the existing batch of artworks has been cycled through.
+server-side functionality to fetch, shuffle, select & store a batch of artworks.
+only needs to be called every 100 days (when the existing batch of artworks has
+been cycled through).
 */
 
-import './DatePrototypes.js';
 import * as fs from 'fs';
-export var iiifUrl;
+import { setDateBatched } from './dateMethods.js';
+import { getIiifUrl, setIiifUrl } from './iiifUrlMethods.js';
 
-const artworkBatchManager = async () => {
+const batchSelectionManager = async () => {
     const artworkPool = await fetchPool();
     shufflePool(artworkPool);
     const artworkBatch = selectBatch(artworkPool);
@@ -30,7 +30,7 @@ const fetchPool = async () => {
         current iiifUrl, used for building image URLs */
         const data = await response.json();
         const totalPages = Math.ceil(data.pagination.total_pages / 100);
-        iiifUrl = data.config.iiif_url;
+        setIiifUrl(data.config.iiif_url);
 
         // query params
         const limit = 100;
@@ -83,7 +83,7 @@ const fetchPool = async () => {
     }
 }
 
-const shufflePool = (artworkBatch) => {
+const shufflePool = artworkBatch => {
     let currentIndex = artworkBatch.length;
 
     while (currentIndex != 0) {
@@ -95,12 +95,13 @@ const shufflePool = (artworkBatch) => {
     }
 }
 
-const selectBatch = (artworkPool) => {
+const selectBatch = artworkPool => {
     return artworkPool.slice(0, 100);
 }
 
-const persistBatch = (artworkBatch) => {
+const persistBatch = artworkBatch => {
     fs.writeFileSync('artworkBatch.json', JSON.stringify(artworkBatch, null, 2));
+    setDateBatched(new Date().dateRecorded());
 }
 
-artworkBatchManager();
+batchSelectionManager();
