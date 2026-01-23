@@ -23,7 +23,7 @@ const artworkSwitchingManager = () => {
     const imageId = currentArtwork.image_id;
     const suffix = '/full/843,/0/default.jpg';  // recommended by the AIC docs
     const artworkUrl = `${iiifUrl}` + `${imageId}` + `${suffix}`;
-    
+    console.log(artworkUrl);
 }
 
 const daysElapsed = epoch => 
