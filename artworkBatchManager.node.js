@@ -1,19 +1,21 @@
-// Functionality to fetch a pool of random artworks, shuffle the pool,
-// take the first 100 (random) artworks and store them using Node fs.
+/*
+Functionality to fetch a pool of random artworks, shuffle the pool, take the
+first 100 (random) artworks and store them using Node fs.
+Only needs to be called when the existing batch of artworks has been cycled through.
+*/
 
-// Only needs to be called when the existing batch of artworks has been cycled through
-
+import './DatePrototypes.js';
 import * as fs from 'fs';
 export var iiifUrl;
 
 const artworkBatchManager = async () => {
-    const artworkPool = await fetchArtworkPool();
-    shuffleArtworkPool(artworkPool);
+    const artworkPool = await fetchPool();
+    shufflePool(artworkPool);
     const artworkBatch = selectBatch(artworkPool);
-    persistArtworkBatch(artworkBatch);
+    persistBatch(artworkBatch);
 }
 
-const fetchArtworkPool = async () => {
+const fetchPool = async () => {
     const baseUrl = 'https://api.artic.edu/api/v1/artworks'
     const artworkCountUrl = `${baseUrl}?limit=1`;
 
@@ -24,7 +26,8 @@ const fetchArtworkPool = async () => {
             throw new Error(`Response status: ${response.status}`);
         }
 
-        // finds total no. of pages once artworks are batched by 100
+        /* finds total no. of pages once artworks are batched by 100 +
+        current iiifUrl, used for building image URLs */
         const data = await response.json();
         const totalPages = Math.ceil(data.pagination.total_pages / 100);
         iiifUrl = data.config.iiif_url;
@@ -80,7 +83,7 @@ const fetchArtworkPool = async () => {
     }
 }
 
-const shuffleArtworkPool = (artworkBatch) => {
+const shufflePool = (artworkBatch) => {
     let currentIndex = artworkBatch.length;
 
     while (currentIndex != 0) {
@@ -96,7 +99,7 @@ const selectBatch = (artworkPool) => {
     return artworkPool.slice(0, 100);
 }
 
-const persistArtworkBatch = (artworkBatch) => {
+const persistBatch = (artworkBatch) => {
     fs.writeFileSync('artworkBatch.json', JSON.stringify(artworkBatch, null, 2));
 }
 
