@@ -1,8 +1,10 @@
+import * as fs from 'fs';
+
 let dateBatched = null; // date of the latest batch selection
 const isBrowser = typeof window !== 'undefined' 
     && typeof window.document !== 'undefined';
 
-/* Extend prototypes for Date */ 
+// Extend prototypes for Date
 Date.prototype.dateRecorded = function () { 
     return ((this.getDate() < 10)?"0":"") + this.getDate() 
     +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) 
@@ -15,21 +17,32 @@ Date.prototype.timeRecorded = function () {
     +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 }
 
-/* Getter + Setter function for the most recent date batched */
+// Getter + Setter function for the most recent date batched
 export const getDateBatched = () => {
-    if (isBrowser) {
-        return localStorage.getItem('dateBatched');
-    } else {
-        return dateBatched;
+    if (fs.existsSync('./data/batchData.json')) {
+        const data = JSON.parse(fs.readFileSync('./data/batchData.json', 'utf-8'));
+        return data.dateBatched;
     }
 }
-
+    
 export const setDateBatched = date => {
-    if (isBrowser) {
-        localStorage.setItem('dateBatched', date);
-    } else {
-        dateBatched = date;
-    }
+    const batchData = JSON.parse(fs.readFileSync('./data/batchData.json', 'utf-8'));
+    batchData.dateBatched = date;
+    fs.writeFileSync('./data/batchData.json', JSON.stringify(batchData, null, 2));
+}
+
+// Functions to calculate days elapsed since significant dates
+export const daysElapsedEpoch = epoch =>        // days since initialisation
+    Math.floor((new Date() - new Date(epoch).setHours(0,0,0,0)) / 86400000);
+
+export const daysElapsedBatching = () => {      // days since last batching
+    const dateFormat = getDateBatched().split('/');
+    const day = dateFormat[0];
+    const month = dateFormat[1];
+    const year = dateFormat[2];
+    const dateBatched = new Date(`${year}-${month}-${day}T00:00:00Z`).getTime();
+
+    return Math.floor((new Date() - new Date(dateBatched).getTime().setHours(0,0,0,0)) / 86400000);
 }
 
 export {}; // satisfies ESM syntax

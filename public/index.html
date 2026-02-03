@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Daily Art</title>
+</head>
+<body>
+
+    <h1>Today's Artwork</h1>
+    <img id="todays-artwork" alt="Daily Artwork" />
+
+    <script>
+        fetch('/current-artwork')
+            .then(response => response.json())
+            .then(data => {
+                const artworkUrl = data.artworkUrl;
+                document.getElementById('todays-artwork').src = artworkUrl;
+            })
+            .catch(err => console.error("Failed to fetch artwork:", err));
+    </script>
+
+</body>
+</html>
