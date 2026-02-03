@@ -1,14 +1,27 @@
-/*
-server-side functionality to fetch, shuffle, select & store a batch of artworks.
-only needs to be called every 100 days (when the existing batch of artworks has
-been cycled through).
-*/
+/* all server-side logic related to the management of the artwork batch */
 
 import * as fs from 'fs';
-import { setDateBatched } from './dateMethods.js';
-import { getIiifUrl, setIiifUrl } from './iiifUrlMethods.js';
+import { setIiifUrl } from '../iiifUrlMethods.js';
+import { daysElapsedBatching, setDateBatched } from './dateMethods.js';
+import { escape } from 'querystring';
 
-const batchSelectionManager = async () => {
+/* generates a new artwork batch if required */
+export const artworkBatchManager = async () => {
+    batch_nonexistent: if (!fs.existsSync('./data/artworkBatch.json', 'utf-8')) {
+        await newArtworkBatch();
+        break batch_nonexistent;
+    } else {
+        const lastBatchAge = daysElapsedBatching();
+        if (lastBatchAge > 100 ) {
+            await newArtworkBatch();
+        }
+    }
+}
+
+/* functionality to fetch, shuffle, select, & store a random batch of 100 artworks.
+only needs to be called every 100 days, i.e. when the existing batch of artworks
+has been cycled through. */
+const newArtworkBatch = async () => {
     const artworkPool = await fetchPool();
     shufflePool(artworkPool);
     const artworkBatch = selectBatch(artworkPool);
@@ -89,7 +102,6 @@ const shufflePool = artworkBatch => {
     while (currentIndex != 0) {
         let randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-
         [artworkBatch[currentIndex], artworkBatch[randomIndex]] = 
         [artworkBatch[randomIndex], artworkBatch[currentIndex]];
     }
@@ -100,8 +112,6 @@ const selectBatch = artworkPool => {
 }
 
 const persistBatch = artworkBatch => {
-    fs.writeFileSync('artworkBatch.json', JSON.stringify(artworkBatch, null, 2));
+    fs.writeFileSync('./data/artworkBatch.json', JSON.stringify(artworkBatch, null, 2));
     setDateBatched(new Date().dateRecorded());
 }
-
-batchSelectionManager();
