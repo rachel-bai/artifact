@@ -12,27 +12,37 @@ import { artworkBatchManager } from './artworkBatchManager.js';
 
 const epoch = new Date("2026-01-15T00:00:00Z").getTime();
 
-export const artworkSelectionManager = async () => {
+export const getTodaysArtwork = async () => {
     await artworkBatchManager();
-    const artworkUrl = getArtworkUrl();
-    return artworkUrl;
+    
+    const artwork = getArtworkObject();
+    const artworkUrl = getArtworkUrl(artwork);
+    const artworkData = getArtworkMetadata(artwork);
+    artworkData.url = artworkUrl;
+    
+    return artworkData;  // returns artwork object with required metadata
 }
 
-const getArtworkUrl = () => {
-    // get current artwork index based on date
+/* get current artwork index based on date */
+const getArtworkObject = () => {
     const index = daysElapsedEpoch(epoch) % 100;
     const artworkBatch = JSON.parse(fs.readFileSync('./data/artworkBatch.json', 'utf-8'));
-    const currentArtwork = artworkBatch[index]
+    return artworkBatch[index];
+}
 
-    // construct new URL based on chosen image
+/* construct new URL based on chosen image */
+const getArtworkUrl = artwork => {
     const iiifUrl = getIiifUrl() + '/';
-    console.log(iiifUrl);
-    const imageId = currentArtwork.image_id;
+    const imageId = artwork.image_id;
     const suffix = '/full/843,/0/default.jpg';  // recommended by the AIC docs
     const artworkUrl = `${iiifUrl}${imageId}${suffix}`;
     return artworkUrl;
 }
 
-const getArtworkMetadata = () => {
-
+/* keep required metadata */
+const getArtworkMetadata = artwork => {
+    delete artwork['id'];
+    delete artwork['api_link'];
+    delete artwork['image_id'];
+    return artwork;
 }

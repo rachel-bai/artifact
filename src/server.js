@@ -1,6 +1,6 @@
 import http from 'http';
 import fs from 'fs'
-import { artworkSelectionManager } from './getTodaysArtwork.js';
+import { getTodaysArtwork } from './getTodaysArtwork.js';
 
 const server = http.createServer(async (req, res) => {
 
@@ -15,14 +15,16 @@ const server = http.createServer(async (req, res) => {
         res.end(css);
         return;
     } else if (req.url === '/current-artwork') {
-        const artworkUrl = await artworkSelectionManager();
+        const artwork = await getTodaysArtwork();
+        const artworkUrl = artwork.url;
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ "artworkUrl": artworkUrl }));
+        res.end(JSON.stringify({ 'artworkUrl': artworkUrl }));
         return;
     }
 
     res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('404 Not Found');
+    res.end("404 Not Found");
 });
 
 server.listen(3000, () => console.log("Server running at http://localhost:3000"));

@@ -42,7 +42,7 @@ export const daysElapsedBatching = () => {      // days since last batching
     const year = dateFormat[2];
     const dateBatched = new Date(`${year}-${month}-${day}T00:00:00Z`).getTime();
 
-    return Math.floor((new Date() - new Date(dateBatched).getTime().setHours(0,0,0,0)) / 86400000);
+    return Math.floor((new Date() - new Date(dateBatched).setHours(0,0,0,0)) / 86400000);
 }
 
 export {}; // satisfies ESM syntax
