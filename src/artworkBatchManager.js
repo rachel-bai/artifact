@@ -18,8 +18,7 @@ export const artworkBatchManager = async () => {
 }
 
 /* functionality to fetch, shuffle, select, clean, & store a random artwork batch.
-only needs to be called every 100 days, i.e. when the existing batch of artworks
-has been cycled through. */
+only needs to be called when the existing batch of artworks has been cycled through. */
 const newArtworkBatch = async () => {
     const artworkPool = await fetchPool();
     shufflePool(artworkPool);
@@ -28,6 +27,7 @@ const newArtworkBatch = async () => {
     persistBatch(artworkBatch);
 }
 
+/* fetch request to the AIC API which collects a random pool of artworks*/
 const fetchPool = async () => {
     const baseUrl = 'https://api.artic.edu/api/v1/artworks'
     const artworkCountUrl = `${baseUrl}?limit=1`;
@@ -39,13 +39,10 @@ const fetchPool = async () => {
             throw new Error(`Response status: ${response.status}`);
         }
 
-        /* finds total no. of pages once artworks are batched by 100 +
-        current iiifUrl, used for building image URLs */
         const data = await response.json();
         const totalPages = Math.ceil(data.pagination.total_pages / 100);
         setIiifUrl(data.config.iiif_url);
 
-        // query params
         const limit = 100;
         const fields = [
             'id',
@@ -58,7 +55,6 @@ const fetchPool = async () => {
             'artist_display'
         ].join(',');
         
-        // tracker for visited pages + array for randomly selected artworks
         var pageVisited = new Array(totalPages).fill(false);
         var artworkBatch = new Array();
         
@@ -94,6 +90,7 @@ const fetchPool = async () => {
     }
 }
 
+/* shuffle the pool of artworks to add variability */
 const shufflePool = artworkBatch => {
     let currentIndex = artworkBatch.length;
 
@@ -105,6 +102,7 @@ const shufflePool = artworkBatch => {
     }
 }
 
+/* remove artworks with null fields */
 const cleanBatch = artworkPool => {
     return artworkPool.filter(artwork => {
         const requiredFields = [
@@ -119,10 +117,12 @@ const cleanBatch = artworkPool => {
     });
 }
 
+/* size control of the batch */
 const selectBatch = cleanedBatch => {
     return cleanedBatch.slice(0, 100);
 }
 
+/* store the batch in JSON */
 const persistBatch = artworkBatch => {
     fs.writeFileSync('./data/artworkBatch.json', JSON.stringify(artworkBatch, null, 2));
     setDateBatched(new Date().dateRecorded());
