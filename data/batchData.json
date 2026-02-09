@@ -1,4 +1,5 @@
 {
   "iiifUrl": "https://www.artic.edu/iiif/2",
-  "dateBatched": "04/02/2026"
+  "dateBatched": "05/02/2026",
+  "batchSize": 100
 }

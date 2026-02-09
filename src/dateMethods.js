@@ -17,7 +17,7 @@ Date.prototype.timeRecorded = function () {
     +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 }
 
-// Getter + Setter function for the most recent date batched
+// Getter + Setter functions for the most recent date batched
 export const getDateBatched = () => {
     if (fs.existsSync('./data/batchData.json')) {
         const data = JSON.parse(fs.readFileSync('./data/batchData.json', 'utf-8'));

@@ -1,9 +1,8 @@
 /* all server-side logic related to the management of the artwork batch */
 
 import * as fs from 'fs';
-import { setIiifUrl } from '../iiifUrlMethods.js';
+import { setIiifUrl } from './iiifUrlMethods.js';
 import { daysElapsedBatching, setDateBatched } from './dateMethods.js';
-import { escape } from 'querystring';
 
 /* generates a new artwork batch if required */
 export const artworkBatchManager = async () => {
@@ -18,13 +17,14 @@ export const artworkBatchManager = async () => {
     }
 }
 
-/* functionality to fetch, shuffle, select, & store a random batch of 100 artworks.
+/* functionality to fetch, shuffle, select, clean, & store a random artwork batch.
 only needs to be called every 100 days, i.e. when the existing batch of artworks
 has been cycled through. */
 const newArtworkBatch = async () => {
     const artworkPool = await fetchPool();
     shufflePool(artworkPool);
-    const artworkBatch = selectBatch(artworkPool);
+    const cleanedBatch = cleanBatch(artworkPool);
+    const artworkBatch = selectBatch(cleanedBatch);
     persistBatch(artworkBatch);
 }
 
@@ -55,8 +55,7 @@ const fetchPool = async () => {
             'artwork_type_title',
             'date_display',
             'artist_title',
-            'artist_display',
-            'short_description'
+            'artist_display'
         ].join(',');
         
         // tracker for visited pages + array for randomly selected artworks
@@ -87,8 +86,7 @@ const fetchPool = async () => {
                 pageVisited[randomPageIndex] = true;
             }
         }
-        while (artworkBatch.length < 100);
-
+        while (artworkBatch.length < 500);
         return artworkBatch;
 
     } catch (error) {
@@ -107,11 +105,40 @@ const shufflePool = artworkBatch => {
     }
 }
 
-const selectBatch = artworkPool => {
-    return artworkPool.slice(0, 100);
+const cleanBatch = artworkPool => {
+    return artworkPool.filter(artwork => {
+        const requiredFields = [
+            'image_id',
+            'title', 
+            'date_display', 
+            'artist_display', 
+            'artwork_type_title',
+            'artist_title'
+        ];
+        return requiredFields.every(field => artwork[field] != null);
+    });
+}
+
+const selectBatch = cleanedBatch => {
+    return cleanedBatch.slice(0, 100);
 }
 
 const persistBatch = artworkBatch => {
     fs.writeFileSync('./data/artworkBatch.json', JSON.stringify(artworkBatch, null, 2));
     setDateBatched(new Date().dateRecorded());
+    setBatchSize(artworkBatch.length);
+}
+
+// Getter + Setter functions for the size of the latest artwork batch
+export const getBatchSize = () => {
+    if (fs.existsSync('./data/batchData.json')) {
+        const data = JSON.parse(fs.readFileSync('./data/batchData.json', 'utf-8'))
+        return data.batchSize;
+    }
+}
+    
+export const setBatchSize = size => {
+    const batchData = JSON.parse(fs.readFileSync('./data/batchData.json', 'utf-8'));
+    batchData.batchSize = size;
+    fs.writeFileSync('./data/batchData.json', JSON.stringify(batchData, null, 2));
 }

@@ -16,10 +16,8 @@ const server = http.createServer(async (req, res) => {
         return;
     } else if (req.url === '/current-artwork') {
         const artwork = await getTodaysArtwork();
-        const artworkUrl = artwork.url;
-
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ 'artworkUrl': artworkUrl }));
+        res.end(JSON.stringify(artwork));
         return;
     }
 

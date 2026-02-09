@@ -6,9 +6,9 @@ on this project!
 */
 
 import * as fs from 'fs';
-import { getIiifUrl } from '../iiifUrlMethods.js';
+import { getIiifUrl } from './iiifUrlMethods.js';
 import { daysElapsedEpoch } from './dateMethods.js';
-import { artworkBatchManager } from './artworkBatchManager.js';
+import { artworkBatchManager, getBatchSize } from './artworkBatchManager.js';
 
 const epoch = new Date("2026-01-15T00:00:00Z").getTime();
 
@@ -25,7 +25,8 @@ export const getTodaysArtwork = async () => {
 
 /* get current artwork index based on date */
 const getArtworkObject = () => {
-    const index = daysElapsedEpoch(epoch) % 100;
+    const lastBatchSize = getBatchSize();
+    const index = daysElapsedEpoch(epoch) % lastBatchSize;
     const artworkBatch = JSON.parse(fs.readFileSync('./data/artworkBatch.json', 'utf-8'));
     return artworkBatch[index];
 }

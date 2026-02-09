@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-// Getter + Setter function for the IIIF URL of the latest atwork batch 
+// Getter + Setter functions for the IIIF URL of the latest atwork batch 
 export const getIiifUrl = () => {
     if (fs.existsSync('./data/batchData.json')) {
         const data = JSON.parse(fs.readFileSync('./data/batchData.json', 'utf-8'))
