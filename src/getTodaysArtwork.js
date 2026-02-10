@@ -14,13 +14,10 @@ const epoch = new Date("2026-01-15T00:00:00Z").getTime();
 
 export const getTodaysArtwork = async () => {
     await artworkBatchManager();
-    
     const artwork = getArtworkObject();
     const artworkUrl = getArtworkUrl(artwork);
-    const artworkData = getArtworkMetadata(artwork);
-    artworkData.url = artworkUrl;
-    
-    return artworkData;  // returns artwork object with required metadata
+    artwork.url = artworkUrl;
+    return artwork;
 }
 
 /* get current artwork index based on date */
@@ -38,12 +35,4 @@ const getArtworkUrl = artwork => {
     const suffix = '/full/843,/0/default.jpg';  // recommended by the AIC docs
     const artworkUrl = `${iiifUrl}${imageId}${suffix}`;
     return artworkUrl;
-}
-
-/* keep required metadata */
-const getArtworkMetadata = artwork => {
-    delete artwork['id'];
-    delete artwork['api_link'];
-    delete artwork['image_id'];
-    return artwork;
 }

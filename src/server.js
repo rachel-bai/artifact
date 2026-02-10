@@ -30,6 +30,17 @@ const server = http.createServer(async (req, res) => {
             res.end('File not found');
         }
         return;
+    } else if (req.url.endsWith('.html')) {
+        try {
+            const htmlPath = path.join(__dirname, '..', req.url.slice(1));
+            const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(htmlContent);
+        } catch (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('File not found');
+        }
+        return;
     }
 
     res.writeHead(404, { 'Content-Type': 'text/plain' });
