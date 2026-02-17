@@ -1,3 +1,5 @@
+import { isLiked, likeArtwork, unlikeArtwork } from "./likedWorksManager.js";
+
 let artworkObject = null;
 
 export const loadArtifactPage = async () => {
@@ -26,35 +28,24 @@ const loadArtwork = async () => {
 const likeUnlikeManager = artworkObject => {
     const button = document.getElementById("heart-button");
     const icon = document.getElementById("heart-icon");
+    const liked = isLiked(artworkObject.id);
 
-    const liked = localStorage.getItem("heart-liked") === "true";
     if (liked) {
         icon.classList.remove("bi-heart");
         icon.classList.add("bi-heart-fill", "text-danger");
     }
 
     button.addEventListener("click", () => {
-        const isLiked = icon.classList.toggle("bi-heart-fill");
+        icon.classList.toggle("bi-heart-fill");
         icon.classList.toggle("bi-heart");
         icon.classList.toggle("text-danger");
-        localStorage.setItem("heart-liked", isLiked);
-        if (isLiked) {
-            likeArtwork(artworkObject);
-        } else {
+
+        const currentlyLiked = isLiked(artworkObject.id);
+
+        if (currentlyLiked) {
             unlikeArtwork(artworkObject);
+        } else {
+            likeArtwork(artworkObject);
         }
     });
-}
-
-/* functional heart button logic */
-const likeArtwork = artworkObject => {
-    const likedArtworks = JSON.parse(localStorage.getItem('likedArtworks')) || {};
-    likedArtworks[artworkObject.id] = artworkObject;
-    localStorage.setItem('likedArtworks', JSON.stringify(likedArtworks));
-}
-
-const unlikeArtwork = artworkObject => {
-    const likedArtworks = JSON.parse(localStorage.getItem('likedArtworks'));
-    delete likedArtworks[artworkObject.id];
-    localStorage.setItem('likedArtworks', JSON.stringify(likedArtworks));
 }

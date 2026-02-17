@@ -1,17 +1,20 @@
 import { loadArtifactPage } from "./loadArtifactPage.js";
 import { loadLikedPage } from "./loadLikedPage.js";
 
-// let artworkObject = null;
-
 /* navbar links */
 document.addEventListener("DOMContentLoaded", () => {
+    const page = window.location.hash.replace("#", "") || "artifact";
+    loadPage(page);
+
     document.getElementById("artifact-page").addEventListener("click", e => {
         e.preventDefault();
+        window.location.hash = 'artifact';
         loadPage('artifact');
     });
 
     document.getElementById("liked-page").addEventListener("click", e => {
         e.preventDefault();
+        window.location.hash = 'liked';
         loadPage('liked');
     });
 });

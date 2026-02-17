@@ -8,7 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const server = http.createServer(async (req, res) => {
-
     if (req.url === '/') {
         const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf-8');
         res.writeHead(200, { 'Content-Type': 'text/html' });
