@@ -1,7 +1,7 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
-import { getTodaysArtwork } from './getTodaysArtwork.js';
+import { getTodaysArtwork } from '../state/getTodaysArtwork.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -35,6 +35,17 @@ const server = http.createServer(async (req, res) => {
             const htmlContent = fs.readFileSync(htmlPath, 'utf-8');
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(htmlContent);
+        } catch (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('File not found');
+        }
+        return;
+    } else if (req.url.endsWith('.css')) {
+        try {
+            const cssPath = path.join(__dirname, '..', req.url.slice(1));
+            const cssContent = fs.readFileSync(cssPath, 'utf-8');
+            res.writeHead(200, { 'Content-Type': 'text/css' });
+            res.end(cssContent);
         } catch (err) {
             res.writeHead(404, { 'Content-Type': 'text/plain' });
             res.end('File not found');

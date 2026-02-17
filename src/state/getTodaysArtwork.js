@@ -6,8 +6,8 @@ on this project!
 */
 
 import * as fs from 'fs';
-import { getIiifUrl } from './iiifUrlMethods.js';
-import { daysElapsedEpoch } from './dateMethods.js';
+import { getIiifUrl } from '../iiifUrlMethods.js';
+import { daysElapsedEpoch } from '../dateMethods.js';
 import { artworkBatchManager, getBatchSize } from './artworkBatchManager.js';
 
 const epoch = new Date("2026-01-15T00:00:00Z").getTime();

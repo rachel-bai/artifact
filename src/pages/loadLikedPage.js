@@ -9,12 +9,11 @@ export const loadLikedPage = () => {
         .forEach(work => {
             container.innerHTML += `
                 <div class="col-6 col-md-4 col-lg-3">
-                <div class="card h-100">
-                    <img src="${work.url}" class="card-img-top">
-                    <div class="card-body">
-                    <p class="card-title">${work.title}</p>
+                    <div class="card">
+                        <div class="square-image-wrapper">
+                            <img src="${work.url}" class="card-img-top">
+                        </div>
                     </div>
-                </div>
                 </div>
             `;
         });
