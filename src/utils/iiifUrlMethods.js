@@ -9,6 +9,6 @@ export const getIiifUrl = () => {
 }
     
 export const setIiifUrl = url => {
-    const iiifUrl = { "iiifUrl": url }
+    const iiifUrl = { 'iiifUrl': url }
     fs.writeFileSync('./data/batchData.json', JSON.stringify(iiifUrl));
 }

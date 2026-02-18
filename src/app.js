@@ -1,18 +1,18 @@
-import { loadArtifactPage } from "./loadArtifactPage.js";
-import { loadLikedPage } from "./loadLikedPage.js";
+import { loadArtifactPage } from './pages/loadArtifactPage.js';
+import { loadLikedPage } from './pages/loadLikedPage.js';
 
 /* navbar links */
-document.addEventListener("DOMContentLoaded", () => {
-    const page = window.location.hash.replace("#", "") || "artifact";
+document.addEventListener('DOMContentLoaded', () => {
+    const page = window.location.hash.replace('#', '') || 'artifact';
     loadPage(page);
 
-    document.getElementById("artifact-page").addEventListener("click", e => {
+    document.getElementById('artifact-page').addEventListener('click', e => {
         e.preventDefault();
         window.location.hash = 'artifact';
         loadPage('artifact');
     });
 
-    document.getElementById("liked-page").addEventListener("click", e => {
+    document.getElementById('liked-page').addEventListener('click', e => {
         e.preventDefault();
         window.location.hash = 'liked';
         loadPage('liked');
@@ -21,9 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* load the DOM */
 const loadPage = async page => {
-    const response = await fetch(`./${page}.html`);
+    const response = await fetch(`../html/${page}.html`);
     const html = await response.text();
-    document.getElementById("content").innerHTML = html;
+    document.getElementById('content').innerHTML = html;
 
     switch (page) {
         case 'artifact':
@@ -34,6 +34,3 @@ const loadPage = async page => {
             break;
     }
 }
-
-/* initial page load */
-loadPage('artifact');

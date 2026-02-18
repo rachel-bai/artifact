@@ -1,8 +1,8 @@
 /* all server-side logic related to the management of the artwork batch */
 
 import * as fs from 'fs';
-import { setIiifUrl } from './iiifUrlMethods.js';
-import { daysElapsedBatching, setDateBatched } from './dateMethods.js';
+import { setIiifUrl } from '../utils/iiifUrlMethods.js';
+import { daysElapsedBatching, setDateBatched } from '../utils/dateMethods.js';
 
 /* generates a new artwork batch if required */
 export const artworkBatchManager = async () => {
@@ -50,9 +50,11 @@ const fetchPool = async () => {
             'image_id',
             'title',
             'artwork_type_title',
+            // 'medium_display',
             'date_display',
             'artist_title',
-            'artist_display'
+            'artist_display',
+            // 'description'
         ].join(',');
         
         var pageVisited = new Array(totalPages).fill(false);

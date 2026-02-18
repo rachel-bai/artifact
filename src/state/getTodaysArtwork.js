@@ -6,11 +6,11 @@ on this project!
 */
 
 import * as fs from 'fs';
-import { getIiifUrl } from '../iiifUrlMethods.js';
-import { daysElapsedEpoch } from '../dateMethods.js';
+import { getIiifUrl } from '../utils/iiifUrlMethods.js';
+import { daysElapsedEpoch } from '../utils/dateMethods.js';
 import { artworkBatchManager, getBatchSize } from './artworkBatchManager.js';
 
-const epoch = new Date("2026-01-15T00:00:00Z").getTime();
+const epoch = new Date('2026-01-15T00:00:00Z').getTime();
 
 export const getTodaysArtwork = async () => {
     await artworkBatchManager();
