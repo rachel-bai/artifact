@@ -1,20 +1,27 @@
 export const getLikedWorks = () => {
-    return JSON.parse(localStorage.getItem('likedArtworks')) || {};
+    return JSON.parse(localStorage.getItem('likedArtworks')) || [];
 }
 
-export const isLiked = (id) => {
+export const isLiked = artworkObject => {
     const likedWorks = getLikedWorks();
-    return !!likedWorks[id];
+    return likedWorks.some(artwork => artwork.id === Number(artworkObject.id));
 }
 
-export const likeArtwork = (artworkObject) => {
+export const likeArtwork = artworkObject => {
     const likedWorks = getLikedWorks();
-    likedWorks[artworkObject.id] = artworkObject;
-    localStorage.setItem('likedArtworks', JSON.stringify(likedWorks));
+
+    if (!likedWorks.some(artwork => artwork.id === artworkObject.id)) {
+        likedWorks.unshift(artworkObject);
+        localStorage.setItem('likedArtworks', JSON.stringify(likedWorks));
+    }
 }
 
-export const unlikeArtwork = (artworkObject) => {
+export const unlikeArtwork = artworkObject => {
     const likedWorks = getLikedWorks();
-    delete likedWorks[artworkObject.id];
-    localStorage.setItem('likedArtworks', JSON.stringify(likedWorks));
+
+    const updatedWorks = likedWorks.filter(
+        artwork => artwork.id !== Number(artworkObject.id)
+    )
+    
+    localStorage.setItem('likedArtworks', JSON.stringify(updatedWorks));
 }

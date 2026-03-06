@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* load the DOM */
 const loadPage = async page => {
-    const response = await fetch(`../html/${page}.html`);
+    const response = await fetch(`/html/${page}.html`);
     const html = await response.text();
     document.getElementById('content').innerHTML = html;
 
