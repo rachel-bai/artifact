@@ -4,6 +4,7 @@ import path from 'path';
 import { getTodaysArtwork } from '../state/getTodaysArtwork.js';
 import { fileURLToPath } from 'url';
 
+const PORT = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, '..', '..');
@@ -46,5 +47,5 @@ const server = http.createServer(async (req, res) => {
 })
 
 server.listen(3000, () =>
-    console.log('Server running at http://localhost:3000')
+    console.log(`Server running at http://localhost:${PORT}`)
 )

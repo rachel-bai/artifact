@@ -6,14 +6,12 @@ export const heartUnheartManager = (artworkObject, button, icon)  => {
 
     button.onclick = () => {
         if (isLiked(artworkObject)) {
-            console.log("WE HERE")
             unlikeArtwork(artworkObject);
+            const likedCard = document.querySelector(`.liked-artwork[data-id='${artworkObject.id}']`);
+            if (likedCard) likedCard.parentElement.remove();
         } else {
             likeArtwork(artworkObject);
         }
-
-        console.log(button.classList)
-        console.log(icon.classList)
 
         renderHeart(artworkObject, icon)
     }
